@@ -19,8 +19,7 @@ const generateConfig = env => {
         }
     ]
     // js 操作
-    const scriptLoader = []
-    .concat(env === 'production'
+    const scriptLoader = jsLoaders.concat(env === 'production'
         ? []
         : [
             {
@@ -122,6 +121,7 @@ const generateConfig = env => {
                 // 处理js
                 {
                     test: /\.js$/,
+                    include: [[path.resolve(__dirname, 'src')]],
                     use: scriptLoader,
                     exclude: '/node_modules/'
                 },
@@ -184,12 +184,10 @@ const generateConfig = env => {
     }
 }
 
-
-
 module.exports = env => {
     let config = env === 'production'
         ? productionConfig
         : developmentConfig
 
-        return generateConfig(env);
+    return generateConfig(env);
 }
