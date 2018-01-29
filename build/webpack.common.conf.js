@@ -99,13 +99,12 @@ const generateConfig = env => {
                 options: {
                     name: '[name]-[hash:5].[ext]',
                     // publicPath: '',
-                    outputPath: 'assets/img/',
+                    outputPath: 'images/',
                     // useRelativePath: true,
                     limit: 10000 // 当图片大于多少k使用路径不然使用base64
                 }
             }
         ]
-    
 
     return {
         entry: {
@@ -174,6 +173,8 @@ const generateConfig = env => {
         },
         plugins: [
             extractLess,
+            new webpack.NamedChunksPlugin(),
+            new webpack.NamedModulesPlugin(),
             new HtmlWebpackPlugin({
                 filename: 'index.html', // 名称
                 template: './src/pages/index.html',
