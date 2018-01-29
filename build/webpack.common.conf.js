@@ -6,41 +6,18 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin')
 
-
-// 生成每个页面的配置
-const generatePage = function ({
-    // 配置
-    entry = '',
-    // 模板
-    template = '',
-    // 打包后的名称
-    name = '',
-    chunks = []
-} = {}) {
-    return {
-        entry,
-        plugins: [
-            new HtmlWebpackPlugin({
-                chunks,
-                template,
-                filename: name + '.html'
-            })
-        ]
-    }
-}
-
 const generateConfig = env => {
     const extractLess = new ExtractTextWebpackPlugin({
-        filename: 'css/[name]-bundle-[hash:5].css',
+        filename: 'css/[name]-[hash:5].css',
         allChunks: false // 指定一个提取css范围
     })
 
+    // babel-loader
     const jsLoaders = [
         {
             loader: 'babel-loader'
         }
     ]
-
     // js 操作
     const scriptLoader = []
         .concat(env === 'production'
@@ -48,6 +25,38 @@ const generateConfig = env => {
             : jsLoaders
                 .concat(jsLoaders)
         )
+    
+    // css-loader
+    const cssLoders = [
+        {
+            loader: 'css-loader',
+            options: {
+                importLoaders: 2,
+                sourceMap: env === 'development',
+                minimize: true, // 压缩
+                modules: true
+            }
+        },
+        {
+            loader: 'less-loader',
+            options: {
+                sourceMap: env === 'development'
+            }
+        }
+    ]
+    // css操作
+    const styleLoader = env === 'production'
+        ? extractLess.extract({
+            fallback: {
+                loader: 'style-loader'
+            },
+            use: cssLoders
+        })
+        : [
+            {
+                loader: 'style-loader'
+            }
+        ].concat(cssLoders)
 
     return {
         entry: {
@@ -60,14 +69,21 @@ const generateConfig = env => {
         },
         module: {
             rules: [
+                // 处理js
                 {
                     test: /\.js$/,
                     use: scriptLoader,
                     exclude: '/node_modules/'
+                },
+                // 处理css
+                {
+                    test: /\.less$/,
+                    use: styleLoader
                 }
             ]
         },
         plugins: [
+            extractLess,
             new HtmlWebpackPlugin({
                 filename: 'index.html', // 名称
                 template: './src/pages/index.html',
