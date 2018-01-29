@@ -20,27 +20,40 @@ const generateConfig = env => {
     ]
     // js 操作
     const scriptLoader = []
-        .concat(env === 'production'
-            ? jsLoaders
-            : jsLoaders
-                .concat(jsLoaders)
-        )
-    
+    .concat(env === 'production'
+        ? []
+        : [
+            {
+                loader: 'eslint-loader',
+                options: {
+                    formatter: require('eslint-friendly-formatter')
+                }
+            }
+        ]
+    )
+
     // css-loader
     const cssLoders = [
         {
             loader: 'css-loader',
             options: {
                 importLoaders: 2,
-                sourceMap: env === 'development',
-                minimize: true, // 压缩
-                modules: true
+                minimize: true // 压缩
+            }
+        },
+        {
+            loader: 'postcss-loader',
+            options: {
+                ident: 'postcss',
+                plugins: [
+                    require('autoprefixer')(), // css代码补全
+                    require('postcss-cssnext')()
+                ]
             }
         },
         {
             loader: 'less-loader',
             options: {
-                sourceMap: env === 'development'
             }
         }
     ]
@@ -48,15 +61,50 @@ const generateConfig = env => {
     const styleLoader = env === 'production'
         ? extractLess.extract({
             fallback: {
-                loader: 'style-loader'
+                loader: 'style-loader',
+                options: {
+                    singleton: true,
+                    outputPath: 'images/',
+                    limit: 10000 // 当图片大于多少k使用路径不然使用base64
+                }
             },
             use: cssLoders
         })
         : [
             {
-                loader: 'style-loader'
+                loader: 'style-loader',
+                options: {
+                    outputPath: 'images/',
+                    limit: 10000 // 当图片大于多少k使用路径不然使用base64
+                }
             }
         ].concat(cssLoders)
+    
+    // 处理文件
+    const fileLoader = env === 'development'
+        ? [
+            {
+                loader: 'file-loader',
+                options: {
+                    publicPath: '',
+                    outputPath: 'dist/',
+                    useRelativePath: true
+                }
+            }
+        ]
+        : [
+            {
+                loader: 'url-loader',
+                options: {
+                    name: '[name]-[hash:5].[ext]',
+                    // publicPath: '',
+                    outputPath: 'assets/img/',
+                    // useRelativePath: true,
+                    limit: 10000 // 当图片大于多少k使用路径不然使用base64
+                }
+            }
+        ]
+    
 
     return {
         entry: {
@@ -79,6 +127,45 @@ const generateConfig = env => {
                 {
                     test: /\.less$/,
                     use: styleLoader
+                },
+                // 处理图片
+                {
+                    test: /\.(png|jpg|jpeg|gif)$/,
+                    use: fileLoader.concat({
+                        loader: 'img-loader', // 压缩图片
+                        options: {
+                            pngquant: {
+                                quality: 80
+                            }
+                        }
+                    })
+                },
+                // 处理字体
+                {
+                    test: /\.(eot|woff2|woff|ttf|svg)$/,
+                    use: [
+                        {
+                            loader: 'url-loader',
+                            options: {
+                                publicPath: '',
+                                outputPath: 'dist/',
+                                useRelativePath: true,
+                                limit: 5000 // 当图片大于多少k使用路径不然使用base64
+                            }
+                        }
+                    ]
+                },
+                // 处理图片
+                {
+                    test: /\.html$/,
+                    use: [
+                        {
+                            loader: 'html-loader',
+                            options: {
+                                attrs: ['img:src', 'img:data-src'] // 懒加载情况
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -95,10 +182,12 @@ const generateConfig = env => {
     }
 }
 
+
+
 module.exports = env => {
     let config = env === 'production'
         ? productionConfig
         : developmentConfig
 
-    return merge(generateConfig(env), config)
+        return generateConfig(env);
 }
