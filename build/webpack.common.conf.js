@@ -37,6 +37,7 @@ const generateConfig = env => {
             loader: 'css-loader',
             options: {
                 importLoaders: 2,
+                sourceMap: env === 'development',
                 minimize: true // 压缩
             }
         },
@@ -44,15 +45,19 @@ const generateConfig = env => {
             loader: 'postcss-loader',
             options: {
                 ident: 'postcss',
-                plugins: [
-                    require('autoprefixer')(), // css代码补全
-                    require('postcss-cssnext')()
-                ]
+                sourceMap: env === 'development',
+                plugins: function (loader) {
+                    return [
+                        require('autoprefixer')(), // css代码补全
+                        require('postcss-cssnext')()
+                    ]
+                }
             }
         },
         {
             loader: 'less-loader',
             options: {
+                sourceMap: env === 'development'
             }
         }
     ]
@@ -199,5 +204,5 @@ module.exports = env => {
         ? productionConfig
         : developmentConfig
 
-    return merge(generateConfig(env), config);
+    return merge(generateConfig(env), config)
 }
