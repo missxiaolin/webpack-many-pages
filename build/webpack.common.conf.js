@@ -63,6 +63,7 @@ const generateConfig = env => {
             fallback: {
                 loader: 'style-loader',
                 options: {
+                    transform: './css.transform.js',
                     singleton: true,
                     outputPath: 'images/',
                     limit: 10000 // 当图片大于多少k使用路径不然使用base64
@@ -74,6 +75,7 @@ const generateConfig = env => {
             {
                 loader: 'style-loader',
                 options: {
+                    transform: './css.transform.js',
                     outputPath: 'images/',
                     limit: 10000 // 当图片大于多少k使用路径不然使用base64
                 }
@@ -175,7 +177,7 @@ const generateConfig = env => {
                 filename: 'index.html', // 名称
                 template: './src/pages/index.html',
                 minify: {
-                    // collapseWhitespace: true // 压缩html
+                    collapseWhitespace: true // 压缩html
                 }
             })
         ]
