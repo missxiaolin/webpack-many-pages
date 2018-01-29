@@ -4,6 +4,7 @@ const merge = require('webpack-merge')
 const webpack = require('webpack')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin')
 
 
 // 生成每个页面的配置
@@ -29,6 +30,28 @@ const generatePage = function ({
 }
 
 const generateConfig = env => {
+    const extractLess = new ExtractTextWebpackPlugin({
+        filename: 'css/[name]-bundle-[hash:5].css',
+        allChunks: false // 指定一个提取css范围
+    })
+
+    // js 操作
+    const scriptLoader = []
+        .concat(env === 'production'
+            ? []
+            : [
+                {
+                    loader: 'babel-loader'
+                },
+                {
+                    loader: 'eslint-loader',
+                    options: {
+                        formatter: require('eslint-friendly-formatter')
+                    }
+                }
+            ]
+        )
+
     return {
         entry: {
             index: './src/assets/js/index.js'
@@ -42,9 +65,7 @@ const generateConfig = env => {
             rules: [
                 {
                     test: /\.js$/,
-                    use: {
-                        loader: 'babel-loader'
-                    },
+                    use: scriptLoader,
                     exclude: '/node_modules/'
                 }
             ]
@@ -53,14 +74,6 @@ const generateConfig = env => {
             new HtmlWebpackPlugin({
                 filename: 'index.html', // 名称
                 template: './src/pages/index.html',
-                minify: {
-                    // collapseWhitespace: true // 压缩html
-                }
-            }),
-
-            new HtmlWebpackPlugin({
-                filename: 'artive.html', // 名称
-                template: './src/pages/artive.html',
                 minify: {
                     // collapseWhitespace: true // 压缩html
                 }
