@@ -109,7 +109,8 @@ const generateConfig = env => {
 
     return {
         entry: {
-            index: './src/assets/js/index.js'
+            index: './src/assets/js/index.js',
+            vendor: ['vue']
         },
         output: {
             path: path.resolve(__dirname, '../dist'),
@@ -179,6 +180,14 @@ const generateConfig = env => {
                 minify: {
                     collapseWhitespace: true // 压缩html
                 }
+            }),
+            new webpack.optimize.CommonsChunkPlugin({
+                name: 'vendor',
+                minChunks: Infinity
+            }),
+
+            new webpack.optimize.CommonsChunkPlugin({
+                name: 'manifest'
             })
         ]
     }

@@ -2,7 +2,7 @@
     "presets": [
         ["@babel/preset-env", {
             "targets": {
-                "browserts": ["> 1%', 'last 2 versions", "ie8"]
+                "browserts": ["> 1%', 'last 2 versions"]
                 // "chrome": 52
             }
         }]
