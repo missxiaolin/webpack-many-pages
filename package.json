@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --env development --open --config build/webpack.common.conf.js",
+    "build": "webpack --env production --config build/webpack.common.conf.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,8 +22,18 @@
   },
   "homepage": "https://github.com/missxiaolin/webpack-many-pages#readme",
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.36",
+    "@babel/preset-env": "^7.0.0-beta.36",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^8.0.0-beta.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "clean-webpack-plugin": "^0.1.18",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.1",
     "webpack-merge": "^4.1.1"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-runtime": "^6.26.0"
   }
 }
