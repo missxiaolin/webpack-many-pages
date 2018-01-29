@@ -121,7 +121,7 @@ const generateConfig = env => {
                 // 处理js
                 {
                     test: /\.js$/,
-                    include: [[path.resolve(__dirname, 'src')]],
+                    include: [[path.resolve(__dirname, '..', 'src')]],
                     use: scriptLoader,
                     exclude: '/node_modules/'
                 },
@@ -199,5 +199,5 @@ module.exports = env => {
         ? productionConfig
         : developmentConfig
 
-    return generateConfig(env);
+    return merge(generateConfig(env), config);
 }
