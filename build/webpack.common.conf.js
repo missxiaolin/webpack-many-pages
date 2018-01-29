@@ -3,6 +3,30 @@ const developmentConfig = require('./webpack.dev.conf')
 const merge = require('webpack-merge')
 const webpack = require('webpack')
 const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+
+// 生成每个页面的配置
+const generatePage = function ({
+    // 配置
+    entry = '',
+    // 模板
+    template = '',
+    // 打包后的名称
+    name = '',
+    chunks = []
+} = {}) {
+    return {
+        entry,
+        plugins: [
+            new HtmlWebpackPlugin({
+                chunks,
+                template,
+                filename: name + '.html'
+            })
+        ]
+    }
+}
 
 const generateConfig = env => {
     return {
@@ -26,7 +50,21 @@ const generateConfig = env => {
             ]
         },
         plugins: [
-            
+            new HtmlWebpackPlugin({
+                filename: 'index.html', // 名称
+                template: './src/pages/index.html',
+                minify: {
+                    // collapseWhitespace: true // 压缩html
+                }
+            }),
+
+            new HtmlWebpackPlugin({
+                filename: 'artive.html', // 名称
+                template: './src/pages/artive.html',
+                minify: {
+                    // collapseWhitespace: true // 压缩html
+                }
+            })
         ]
     }
 }
