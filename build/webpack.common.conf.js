@@ -24,7 +24,10 @@ const generateConfig = env => {
                     exclude: '/node_modules/'
                 }
             ]
-        }
+        },
+        plugins: [
+            
+        ]
     }
 }
 
