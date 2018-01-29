@@ -35,21 +35,18 @@ const generateConfig = env => {
         allChunks: false // 指定一个提取css范围
     })
 
+    const jsLoaders = [
+        {
+            loader: 'babel-loader'
+        }
+    ]
+
     // js 操作
     const scriptLoader = []
         .concat(env === 'production'
-            ? []
-            : [
-                {
-                    loader: 'babel-loader'
-                },
-                {
-                    loader: 'eslint-loader',
-                    options: {
-                        formatter: require('eslint-friendly-formatter')
-                    }
-                }
-            ]
+            ? jsLoaders
+            : jsLoaders
+                .concat(jsLoaders)
         )
 
     return {
