@@ -1,0 +1,28 @@
+{
+  "name": "webpack-many-pages",
+  "version": "1.0.0",
+  "description": "webpack多页面打包",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --env development --open --config build/webpack.common.conf.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/missxiaolin/webpack-many-pages.git"
+  },
+  "keywords": [
+    "webpack"
+  ],
+  "author": "xiaolin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/missxiaolin/webpack-many-pages/issues"
+  },
+  "homepage": "https://github.com/missxiaolin/webpack-many-pages#readme",
+  "devDependencies": {
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.1",
+    "webpack-merge": "^4.1.1"
+  }
+}
