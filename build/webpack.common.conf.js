@@ -85,7 +85,7 @@ const generateConfig = env => {
                 }
             }
         ].concat(cssLoders)
-    
+
     // 处理文件
     const fileLoader = env === 'development'
         ? [
@@ -113,7 +113,7 @@ const generateConfig = env => {
 
     return {
         entry: {
-            index: './src/assets/js/index.js',
+            // index: './src/assets/js/index.js',
             vendor: ['vue']
         },
         output: {
@@ -180,13 +180,13 @@ const generateConfig = env => {
             extractLess,
             new webpack.NamedChunksPlugin(),
             new webpack.NamedModulesPlugin(),
-            new HtmlWebpackPlugin({
-                filename: 'index.html', // 名称
-                template: './src/pages/index.html',
-                minify: {
-                    collapseWhitespace: true // 压缩html
-                }
-            }),
+            // new HtmlWebpackPlugin({
+            //     filename: 'index.html', // 名称
+            //     template: './src/pages/index.html',
+            //     minify: {
+            //         collapseWhitespace: true // 压缩html
+            //     }
+            // }),
             new webpack.optimize.CommonsChunkPlugin({
                 name: 'vendor',
                 minChunks: Infinity
@@ -199,10 +199,56 @@ const generateConfig = env => {
     }
 }
 
+// 生成每个页面的配置
+const generatePage = function ({
+    // 配置
+    entry = '',
+    // 模板
+    template = '',
+    // 打包后的名称
+    name = '',
+    chunks = []
+} = {}) {
+    return {
+        entry,
+        plugins: [
+            new HtmlWebpackPlugin({
+                filename: name + '.html', // 名称
+                template: template,
+                minify: {
+                    // collapseWhitespace: true // 压缩html
+                },
+                chunks
+            })
+        ]
+    }
+}
+
+const pages = [
+    generatePage({
+        entry: {
+            index: './src/assets/js/index.js'
+        },
+        template: './src/pages/index.html',
+        name: 'index',
+        chunks: ['vue', 'index']
+    }),
+    generatePage({
+        entry: {
+            artive: './src/assets/js/artive.js'
+        },
+        template: './src/pages/artive.html',
+        name: 'artive',
+        chunks: ['vue', 'artive']
+    })
+]
+
 module.exports = env => {
     let config = env === 'production'
         ? productionConfig
         : developmentConfig
 
-    return merge(generateConfig(env), config)
+    let defaultConfig = generateConfig(env)
+
+    return merge(merge([defaultConfig].concat(pages)), config)
 }
